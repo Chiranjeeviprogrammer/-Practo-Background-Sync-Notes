@@ -12,10 +12,6 @@ jobs:
     name: Build iOS Simulator App
     runs-on: macos-15
 
-    defaults:
-      run:
-        working-directory: Practo-Background-Sync-Notes
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,9 +20,11 @@ jobs:
         run: brew install xcodegen
 
       - name: Generate Xcode project
+        working-directory: Practo-Background-Sync-Notes
         run: xcodegen generate
 
       - name: Build for iOS Simulator
+        working-directory: Practo-Background-Sync-Notes
         run: |
           xcodebuild \
             -project PractoBackgroundSyncNotes.xcodeproj \
