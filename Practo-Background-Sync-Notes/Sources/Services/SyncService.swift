@@ -17,7 +17,7 @@ final class SyncService {
         while true {
             do {
                 try await withBackgroundExecutionTime {
-                    try await api.upload(note: note)
+                     try await self.api.upload(note: note)
                 }
                 return
             } catch {
