@@ -1,0 +1,32 @@
+
+name: PractoBackgroundSyncNotes
+
+options:
+  bundleIdPrefix: com.chiranjeevi
+
+targets:
+  PractoBackgroundSyncNotes:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.chiranjeevi.PractoBackgroundSyncNotes
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+
+  PractoBackgroundSyncNotesTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - Tests
+    dependencies:
+      - target: PractoBackgroundSyncNotes
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.chiranjeevi.PractoBackgroundSyncNotesTests
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES

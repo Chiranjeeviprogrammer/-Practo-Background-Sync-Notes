@@ -1,3 +1,5 @@
+# Practo-Background-Sync-Notes
+
 # Practo Background Sync & Note Taker
 
 A SwiftUI iOS assignment implementation for local note management and simulated background synchronization.
