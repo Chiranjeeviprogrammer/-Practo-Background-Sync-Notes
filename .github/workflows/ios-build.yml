@@ -19,9 +19,17 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Locate project specification
+        run: |
+          echo "Repository root:"
+          pwd
+          echo "Files:"
+          find . -name project.yml -print
+
       - name: Generate Xcode project
-        working-directory: Practo-Background-Sync-Notes
-        run: xcodegen generate
+        run: |
+          cd Practo-Background-Sync-Notes
+          xcodegen generate
 
       - name: Build for iOS Simulator
         working-directory: Practo-Background-Sync-Notes
