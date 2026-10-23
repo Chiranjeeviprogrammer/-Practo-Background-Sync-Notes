@@ -23,13 +23,12 @@ jobs:
         run: |
           echo "Repository root:"
           pwd
-          echo "Files:"
+          echo "Project specification:"
           find . -name project.yml -print
 
       - name: Generate Xcode project
-        run: |
-          cd Practo-Background-Sync-Notes
-          xcodegen generate
+        working-directory: Practo-Background-Sync-Notes
+        run: xcodegen generate
 
       - name: Build for iOS Simulator
         working-directory: Practo-Background-Sync-Notes
@@ -39,5 +38,25 @@ jobs:
             -scheme PractoBackgroundSyncNotes \
             -sdk iphonesimulator \
             -configuration Debug \
+            -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Package Simulator App
+        working-directory: Practo-Background-Sync-Notes
+        run: |
+          APP_PATH="build/DerivedData/Build/Products/Debug-iphonesimulator/PractoBackgroundSyncNotes.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: Simulator app was not found at $APP_PATH"
+            exit 1
+          fi
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$APP_PATH" PractoBackgroundSyncNotes-Simulator.zip
+
+      - name: Upload Simulator App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PractoBackgroundSyncNotes-Simulator
+          path: Practo-Background-Sync-Notes/PractoBackgroundSyncNotes-Simulator.zip
+          if-no-files-found: error
+          retention-days: 7
