@@ -1,8 +1,6 @@
 import Foundation
 import UIKit
 
-/// Coordinates background upload attempts. Note state is updated by the ViewModel;
-/// each upload carries the note version that was current when it started.
 final class SyncService {
     private let api: NotesAPIService
     private let retryPolicy: RetryPolicy
