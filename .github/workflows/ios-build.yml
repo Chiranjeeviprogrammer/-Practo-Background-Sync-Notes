@@ -1,32 +1,43 @@
 
-name: PractoBackgroundSyncNotes
+name: iOS Build
 
-options:
-  bundleIdPrefix: com.chiranjeevi
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
-targets:
-  PractoBackgroundSyncNotes:
-    type: application
-    platform: iOS
-    deploymentTarget: "17.0"
-    sources:
-      - Sources
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.chiranjeevi.PractoBackgroundSyncNotes
-        SWIFT_VERSION: "5.0"
-        GENERATE_INFOPLIST_FILE: YES
+jobs:
+  build:
+    name: Build iOS Simulator App
+    runs-on: macos-15
 
-  PractoBackgroundSyncNotesTests:
-    type: bundle.unit-test
-    platform: iOS
-    deploymentTarget: "17.0"
-    sources:
-      - Tests
-    dependencies:
-      - target: PractoBackgroundSyncNotes
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.chiranjeevi.PractoBackgroundSyncNotesTests
-        SWIFT_VERSION: "5.0"
-        GENERATE_INFOPLIST_FILE: YES
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Locate project specification
+        run: |
+          echo "Repository root:"
+          pwd
+          echo "Files:"
+          find . -name project.yml -print
+
+      - name: Generate Xcode project
+        run: |
+          cd Practo-Background-Sync-Notes
+          xcodegen generate
+
+      - name: Build for iOS Simulator
+        working-directory: Practo-Background-Sync-Notes
+        run: |
+          xcodebuild \
+            -project PractoBackgroundSyncNotes.xcodeproj \
+            -scheme PractoBackgroundSyncNotes \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
