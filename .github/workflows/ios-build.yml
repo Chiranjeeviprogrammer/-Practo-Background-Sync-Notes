@@ -1,5 +1,5 @@
 
-name: iOS Build
+name: Build iOS IPA
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build iOS Simulator App
+    name: Build iPhone IPA
     runs-on: macos-15
 
     steps:
@@ -19,44 +19,45 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
-      - name: Locate project specification
-        run: |
-          echo "Repository root:"
-          pwd
-          echo "Project specification:"
-          find . -name project.yml -print
+      - name: Locate project
+        run: find . -name project.yml -print
 
       - name: Generate Xcode project
         working-directory: Practo-Background-Sync-Notes
         run: xcodegen generate
 
-      - name: Build for iOS Simulator
+      - name: Build for iPhone
         working-directory: Practo-Background-Sync-Notes
         run: |
           xcodebuild \
             -project PractoBackgroundSyncNotes.xcodeproj \
             -scheme PractoBackgroundSyncNotes \
-            -sdk iphonesimulator \
-            -configuration Debug \
+            -sdk iphoneos \
+            -configuration Release \
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Package Simulator App
+      - name: Package unsigned IPA
         working-directory: Practo-Background-Sync-Notes
         run: |
-          APP_PATH="build/DerivedData/Build/Products/Debug-iphonesimulator/PractoBackgroundSyncNotes.app"
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/PractoBackgroundSyncNotes.app"
+
           if [ ! -d "$APP_PATH" ]; then
-            echo "ERROR: Simulator app was not found at $APP_PATH"
+            echo "ERROR: iPhone app build not found: $APP_PATH"
             exit 1
           fi
-          ditto -c -k --sequesterRsrc --keepParent \
-            "$APP_PATH" PractoBackgroundSyncNotes-Simulator.zip
 
-      - name: Upload Simulator App Artifact
+          mkdir -p build/Payload
+          cp -R "$APP_PATH" build/Payload/PractoBackgroundSyncNotes.app
+
+          cd build
+          zip -r PractoBackgroundSyncNotes-unsigned.ipa Payload
+
+      - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PractoBackgroundSyncNotes-Simulator
-          path: Practo-Background-Sync-Notes/PractoBackgroundSyncNotes-Simulator.zip
+          name: PractoBackgroundSyncNotes-unsigned-IPA
+          path: Practo-Background-Sync-Notes/build/PractoBackgroundSyncNotes-unsigned.ipa
           if-no-files-found: error
           retention-days: 7
