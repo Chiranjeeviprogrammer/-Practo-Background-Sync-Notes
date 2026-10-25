@@ -46,8 +46,3 @@ JSONPlaceholder is a mock API, so uploaded notes are not permanently saved for l
 - `Sources/Utilities` – Retry logic
 - `Tests` – Retry policy tests
 
-## Setup
-
-The project uses SwiftUI and targets iOS 17 or later. Open the generated Xcode project on a Mac, check the app and test targets, then build and run the project.
-
-The GitHub Actions workflow can be used to build the project in a macOS environment. Actual device installation and testing require a properly signed iOS app.
